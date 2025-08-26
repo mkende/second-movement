@@ -27,7 +27,8 @@
 
 #include "movement_faces.h"
 
-const watch_face_t watch_faces[] = {
+static const watch_face_t watch_faces[] = {
+    // Primary watch faces
     clock_face,
     world_clock_face,
     sunrise_sunset_face,
@@ -35,10 +36,14 @@ const watch_face_t watch_faces[] = {
     stopwatch_face,
     countdown_face,
     alarm_face,
+    // Secondary watch faces
     temperature_display_face,
     voltage_face,
     settings_face,
-    set_time_face
+    // Hidden watch faces
+    set_time_face,
+    finetune_face,
+    nanosec_face,
 };
 
 #define MOVEMENT_NUM_FACES (sizeof(watch_faces) / sizeof(watch_face_t))
@@ -49,7 +54,15 @@ const watch_face_t watch_faces[] = {
  * Some folks also like to use this to hide the preferences and time set faces from the normal rotation.
  * If you don't want any faces to be excluded, set this to 0 and a long Mode press will have no effect.
  */
-#define MOVEMENT_SECONDARY_FACE_INDEX (MOVEMENT_NUM_FACES - 4)
+#define MOVEMENT_SECONDARY_FACE_INDEX (MOVEMENT_NUM_FACES - 6)
+
+/* Determines a set of watch faces that is not shown through normal cycling with
+*  the Mode button (either short or long press). Instead a watch face can jump
+*  directly to these faces. This is typically done by long pressing the Alarm
+*  button on the clock face.
+*  You can set this to 0 if you don’t want this behavior.
+*/
+#define MOVEMENT_HIDDEN_FACE_INDEX (MOVEMENT_NUM_FACES - 3)
 
 /* If this is defined then pressing mode after having interacted with a watch face
 *  will jump directly to the clock rather than to the next watch face.
