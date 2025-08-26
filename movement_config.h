@@ -64,6 +64,14 @@ static const watch_face_t watch_faces[] = {
 */
 #define MOVEMENT_HIDDEN_FACE_INDEX (MOVEMENT_NUM_FACES - 3)
 
+/* Determines a set of watch faces that is not shown through normal cycling with
+*  the Mode button (either short or long press). Instead a watch face can jump
+*  directly to these faces. This is typically done by long pressing the Alarm
+*  button on the clock face.
+*  You can set this to 0 if you don’t want this behavior.
+*/
+#define MOVEMENT_HIDDEN_FACE_INDEX (MOVEMENT_NUM_FACES - 1)
+
 /* If this is defined then pressing mode after having interacted with a watch face
 *  will jump directly to the clock rather than to the next watch face.
 */
