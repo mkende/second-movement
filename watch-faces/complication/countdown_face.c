@@ -32,7 +32,7 @@
 
 #define CD_SELECTIONS 3
 #define DEFAULT_MINUTES 7
-#define TAP_DETECTION_SECONDS 5
+#define TAP_DETECTION_SECONDS 4
 
 static bool quick_ticks_running;
 

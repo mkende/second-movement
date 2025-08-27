@@ -305,15 +305,6 @@ void movement_move_to_next_face(void) {
     if (MOVEMENT_SECONDARY_FACE_INDEX > 0 && movement_state.current_face_idx < (int16_t)MOVEMENT_SECONDARY_FACE_INDEX) {
         face_max = MOVEMENT_SECONDARY_FACE_INDEX;
     }
-    if (MOVEMENT_HIDDEN_FACE_INDEX) {
-        if (movement_state.current_face_idx >= MOVEMENT_HIDDEN_FACE_INDEX) {
-            movement_move_to_face(0);
-            return;
-        }
-        if (face_max == MOVEMENT_NUM_FACES) {
-            face_max = MOVEMENT_HIDDEN_FACE_INDEX;
-        }
-    }
     movement_move_to_face((movement_state.current_face_idx + 1) % face_max);
 }
 

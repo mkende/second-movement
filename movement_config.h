@@ -29,19 +29,20 @@
 
 static const watch_face_t watch_faces[] = {
     // Primary watch faces
-    clock_face,
-    world_clock_face,
-    sunrise_sunset_face,
-    moon_phase_face,
-    stopwatch_face,
+    stock_clock_face,
     countdown_face,
     alarm_face,
+    stopwatch_face,
+    world_clock_face,
     // Secondary watch faces
+    tide_face,
+    sunrise_sunset_face,
+    moon_phase_face,
     temperature_display_face,
     voltage_face,
-    settings_face,
     // Hidden watch faces
     set_time_face,
+    settings_face,
     finetune_face,
     nanosec_face,
 };
@@ -54,7 +55,7 @@ static const watch_face_t watch_faces[] = {
  * Some folks also like to use this to hide the preferences and time set faces from the normal rotation.
  * If you don't want any faces to be excluded, set this to 0 and a long Mode press will have no effect.
  */
-#define MOVEMENT_SECONDARY_FACE_INDEX (MOVEMENT_NUM_FACES - 6)
+#define MOVEMENT_SECONDARY_FACE_INDEX (MOVEMENT_NUM_FACES - 9)
 
 /* Determines a set of watch faces that is not shown through normal cycling with
 *  the Mode button (either short or long press). Instead a watch face can jump
@@ -62,20 +63,12 @@ static const watch_face_t watch_faces[] = {
 *  button on the clock face.
 *  You can set this to 0 if you don’t want this behavior.
 */
-#define MOVEMENT_HIDDEN_FACE_INDEX (MOVEMENT_NUM_FACES - 3)
-
-/* Determines a set of watch faces that is not shown through normal cycling with
-*  the Mode button (either short or long press). Instead a watch face can jump
-*  directly to these faces. This is typically done by long pressing the Alarm
-*  button on the clock face.
-*  You can set this to 0 if you don’t want this behavior.
-*/
-#define MOVEMENT_HIDDEN_FACE_INDEX (MOVEMENT_NUM_FACES - 1)
+#define MOVEMENT_HIDDEN_FACE_INDEX (MOVEMENT_NUM_FACES - 4)
 
 /* If this is defined then pressing mode after having interacted with a watch face
 *  will jump directly to the clock rather than to the next watch face.
 */
-// #define MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+#define MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
 
 /* Custom hourly chime tune. Check movement_custom_signal_tunes.h for options. */
 #define SIGNAL_TUNE_DEFAULT
@@ -83,15 +76,15 @@ static const watch_face_t watch_faces[] = {
 /* Determines the intensity of the led colors
  * Set a hex value 0-15 with 0x0 being off and 0xF being max intensity
  */
-#define MOVEMENT_DEFAULT_RED_COLOR 0x0
-#define MOVEMENT_DEFAULT_GREEN_COLOR 0xF
-#define MOVEMENT_DEFAULT_BLUE_COLOR 0x0
+#define MOVEMENT_DEFAULT_RED_COLOR 0x5
+#define MOVEMENT_DEFAULT_GREEN_COLOR 0xA
+#define MOVEMENT_DEFAULT_BLUE_COLOR 0xF
 
 /* Set to true for 24h mode or false for 12h mode */
-#define MOVEMENT_DEFAULT_24H_MODE false
+#define MOVEMENT_DEFAULT_24H_MODE true
 
 /* Enable or disable the sound on mode button press */
-#define MOVEMENT_DEFAULT_BUTTON_SOUND true
+#define MOVEMENT_DEFAULT_BUTTON_SOUND false
 
 #define MOVEMENT_DEFAULT_BUTTON_VOLUME WATCH_BUZZER_VOLUME_SOFT
 
@@ -102,7 +95,7 @@ static const watch_face_t watch_faces[] = {
  * 2: 5 minutes
  * 3: 30 minutes
  */
-#define MOVEMENT_DEFAULT_TIMEOUT_INTERVAL 0
+#define MOVEMENT_DEFAULT_TIMEOUT_INTERVAL 2
 
 /* When the timeout value is reached a given watch face can do the following:
  *  - Ignore the timeout if it actively displays a varying information or it
@@ -117,7 +110,7 @@ static const watch_face_t watch_faces[] = {
  * have the watch go back to the main watch face on timeout. Or set it to false
  * to keep these watch face active.
  */
-#define MOVEMENT_TIMEOUT_GOES_TO_CLOCK false
+#define MOVEMENT_TIMEOUT_GOES_TO_CLOCK true
 
 /* Set the timeout before switching to low energy mode
  * Valid values are:
