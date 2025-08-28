@@ -276,8 +276,8 @@ static bool _world_clock_face_do_settings_mode(movement_event_t event, world_clo
             break;
         case EVENT_TIMEOUT:
             persist_world_clock_settings(state);
-            movement_move_to_face(0);
-            break;
+            // we delegate the timeout behavior here to the default handler.
+            return movement_default_loop_handler(event);
         default:
             break;
     }
