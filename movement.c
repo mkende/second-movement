@@ -266,6 +266,11 @@ bool movement_default_loop_handler(movement_event_t event) {
                 movement_move_to_face(0);
             }
             break;
+        case EVENT_TIMEOUT:
+            if (MOVEMENT_TIMEOUT_GOES_TO_CLOCK) {
+                movement_move_to_face(0);
+            }
+            break;
         default:
             movement_state.button_use |= 0x1 << 7;  // record that the last button press did nothing.
             break;
