@@ -247,7 +247,15 @@ bool countdown_face_loop(movement_event_t event, void *context) {
 
             if (state->tap_detection_ticks > 0) {
                 state->tap_detection_ticks--;
-                if (state->tap_detection_ticks == 0) movement_disable_tap_detection_if_available();
+                if (state->tap_detection_ticks == 0) {
+                    movement_disable_tap_detection_if_available();
+                    if (state->has_tapped_once && state->mode == cd_reset) {
+                        // Automatically start the countdown.
+                        start(state);
+                        button_beep();
+                        watch_set_indicator(WATCH_INDICATOR_SIGNAL);
+                    }
+                }
             }
 
             draw(state, event.subsecond);
