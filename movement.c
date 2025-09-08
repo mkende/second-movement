@@ -503,6 +503,7 @@ bool movement_default_loop_handler(movement_event_t event) {
             }
             break;
         default:
+            movement_state.button_use |= 0x1 << 7;  // record that the last button press did nothing.
             break;
     }
 
@@ -512,9 +513,22 @@ bool movement_default_loop_handler(movement_event_t event) {
 void movement_move_to_face(uint8_t watch_face_index) {
     movement_state.watch_face_changed = true;
     movement_state.next_face_idx = watch_face_index;
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+    movement_state.button_use = 0;
+#endif
 }
 
 void movement_move_to_next_face(void) {
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+    if (movement_state.current_face_idx != 0) {
+        for (uint8_t i = 0; i < 3; i++) {
+            if (((movement_state.button_use >> (i * 2)) & 0x3) == 0x3) {
+                movement_move_to_face(0);
+                return;
+            }
+        }
+    }
+#endif
     uint16_t face_max;
     if (MOVEMENT_SECONDARY_FACE_INDEX) {
         face_max = (movement_state.current_face_idx < (int16_t)MOVEMENT_SECONDARY_FACE_INDEX) ? MOVEMENT_SECONDARY_FACE_INDEX : MOVEMENT_NUM_FACES;
@@ -1262,6 +1276,37 @@ static bool _switch_face(void) {
     return can_sleep;
 }
 
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+// Records, in movement_state.button_use, the complete button presses (down then up) handled by the current face.
+static void _movement_track_button_use(movement_event_type_t event_type) {
+    switch (event_type) {
+        case EVENT_LIGHT_BUTTON_DOWN:
+            movement_state.button_use |= 0x1 << 0;
+            break;
+        case EVENT_LIGHT_BUTTON_UP:
+        case EVENT_LIGHT_LONG_UP:
+            movement_state.button_use |= (movement_state.button_use & 0x1) << 1;
+            break;
+        case EVENT_MODE_BUTTON_DOWN:
+            movement_state.button_use |= 0x1 << 2;
+            break;
+        case EVENT_MODE_BUTTON_UP:
+        case EVENT_MODE_LONG_UP:
+            movement_state.button_use |= (movement_state.button_use & (0x1 << 2)) << 1;
+            break;
+        case EVENT_ALARM_BUTTON_DOWN:
+            movement_state.button_use |= 1 << 4;
+            break;
+        case EVENT_ALARM_BUTTON_UP:
+        case EVENT_ALARM_LONG_UP:
+            movement_state.button_use |= (movement_state.button_use & (0x1 << 4)) << 1;
+            break;
+        default:
+            break;
+    }
+}
+#endif
+
 bool app_loop(void) {
     const watch_face_t *wf = &watch_faces[movement_state.current_face_idx];
 
@@ -1329,6 +1374,9 @@ bool app_loop(void) {
         uint8_t next_event = __builtin_ctz(pending_events);
         event.event_type = event_type + next_event;
         can_sleep = wf->loop(event, watch_face_contexts[movement_state.current_face_idx]) && can_sleep;
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+        _movement_track_button_use(event.event_type);
+#endif
         pending_events = pending_events >> (next_event + 1);
         event_type = event_type + next_event + 1;
     }
