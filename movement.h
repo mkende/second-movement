@@ -284,6 +284,9 @@ typedef struct {
     uint8_t tick_frequency;
     uint8_t tick_pern;
 
+    // track the button usage of a given watch face
+    uint8_t button_use;
+
     // backup register stuff
     uint8_t next_available_backup_register;
 
