@@ -38,6 +38,7 @@ static const watch_face_t watch_faces[] = {
     tide_face,
     sunrise_sunset_face,
     moon_phase_face,
+    totp_face,
     temperature_display_face,
     voltage_face,
     // Hidden watch faces
