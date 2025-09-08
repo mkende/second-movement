@@ -33,6 +33,7 @@
 
 #include <stdlib.h>
 #include "stock_clock_face.h"
+#include "movement_config.h"
 #include "watch.h"
 #include "watch_utility.h"
 #include "watch_common_display.h"
@@ -202,10 +203,6 @@ static void clock_stop_tick_tock_animation(void) {
     }
 }
 
-static void clock_toggle_clock_mode(void) {
-
-}
-
 void stock_clock_face_setup(uint8_t watch_face_index, void ** context_ptr) {
     (void) watch_face_index;
 
@@ -241,12 +238,17 @@ bool stock_clock_face_loop(movement_event_t event, void *context) {
             clock_display_low_energy(movement_get_local_date_time());
             break;
         case EVENT_ALARM_LONG_PRESS:
-            movement_set_clock_mode_24h(((movement_clock_mode_24h() + 1) % MOVEMENT_NUM_CLOCK_MODES));
-            clock_indicate_24h();
-            clock_indicate(WATCH_INDICATOR_PM, false);
-            // ensure we re-render fully
-            state->date_time.previous.reg = 0xFFFFFFFF;
-            // intentional fallthrough to redraw
+            if (MOVEMENT_HIDDEN_FACE_INDEX) {
+                movement_move_to_face(MOVEMENT_HIDDEN_FACE_INDEX);
+                break;
+            } else {
+                movement_set_clock_mode_24h(((movement_clock_mode_24h() + 1) % MOVEMENT_NUM_CLOCK_MODES));
+                clock_indicate_24h();
+                clock_indicate(WATCH_INDICATOR_PM, false);
+                // ensure we re-render fully
+                state->date_time.previous.reg = 0xFFFFFFFF;
+                // intentional fallthrough to redraw
+            }
         case EVENT_TICK:
         case EVENT_ACTIVATE:
             current = movement_get_local_date_time();
@@ -258,7 +260,9 @@ bool stock_clock_face_loop(movement_event_t event, void *context) {
             state->date_time.previous = current;
 
             break;
-
+        case EVENT_TIMEOUT:
+            // we never resign this clock face.
+            break;
         default:
             return movement_default_loop_handler(event);
     }
