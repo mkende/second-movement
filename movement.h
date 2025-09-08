@@ -281,6 +281,9 @@ typedef struct {
     uint8_t last_second;
     uint8_t subsecond;
 
+    // track the button usage of a given watch face
+    uint8_t button_use;
+
     // backup register stuff
     uint8_t next_available_backup_register;
 
