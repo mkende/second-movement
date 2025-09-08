@@ -267,6 +267,7 @@ bool movement_default_loop_handler(movement_event_t event) {
             }
             break;
         default:
+            movement_state.button_use |= 0x1 << 7;  // record that the last button press did nothing.
             break;
     }
 
@@ -276,9 +277,22 @@ bool movement_default_loop_handler(movement_event_t event) {
 void movement_move_to_face(uint8_t watch_face_index) {
     movement_state.watch_face_changed = true;
     movement_state.next_face_idx = watch_face_index;
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+    movement_state.button_use = 0;
+#endif
 }
 
 void movement_move_to_next_face(void) {
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+    if (movement_state.current_face_idx != 0) {
+        for (uint8_t i = 0; i < 3; i++) {
+            if (((movement_state.button_use >> (i * 2)) & 0x3) == 0x3) {
+                movement_move_to_face(0);
+                return;
+            }
+        }
+    }
+#endif
     uint16_t face_max;
     if (MOVEMENT_SECONDARY_FACE_INDEX) {
         face_max = (movement_state.current_face_idx < (int16_t)MOVEMENT_SECONDARY_FACE_INDEX) ? MOVEMENT_SECONDARY_FACE_INDEX : MOVEMENT_NUM_FACES;
@@ -905,6 +919,32 @@ bool app_loop(void) {
                     movement_illuminate_led();
             }
         }
+
+#ifdef MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+        switch (event.event_type) {
+            case EVENT_LIGHT_BUTTON_DOWN:
+                movement_state.button_use |= 0x1 << 0;
+                break;
+            case EVENT_LIGHT_BUTTON_UP:
+            case EVENT_LIGHT_LONG_UP:
+                movement_state.button_use |= (movement_state.button_use & 0x1) << 1;
+                break;
+            case EVENT_MODE_BUTTON_DOWN:
+                movement_state.button_use |= 0x1 << 2;
+                break;
+            case EVENT_MODE_BUTTON_UP:
+            case EVENT_MODE_LONG_UP:
+                movement_state.button_use |= (movement_state.button_use & (0x1 << 2)) << 1;
+                break;
+            case EVENT_ALARM_BUTTON_DOWN:
+                movement_state.button_use |= 1 << 4;
+                break;
+            case EVENT_ALARM_BUTTON_UP:
+            case EVENT_ALARM_LONG_UP:
+                movement_state.button_use |= (movement_state.button_use & (0x1 << 4)) << 1;
+                break;
+        }
+#endif
 
         event.event_type = EVENT_NONE;
     }

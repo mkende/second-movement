@@ -51,6 +51,11 @@ const watch_face_t watch_faces[] = {
  */
 #define MOVEMENT_SECONDARY_FACE_INDEX (MOVEMENT_NUM_FACES - 4)
 
+/* If this is defined then pressing mode after having interacted with a watch face
+*  will jump directly to the clock rather than to the next watch face.
+*/
+// #define MOVEMENT_JUMP_TO_CLOCK_AFTER_INTERACTION
+
 /* Custom hourly chime tune. Check movement_custom_signal_tunes.h for options. */
 #define SIGNAL_TUNE_DEFAULT
 
