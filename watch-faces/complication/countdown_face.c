@@ -65,6 +65,11 @@ static inline void load_countdown(countdown_state_t *state) {
     state->seconds = state->set_seconds;
 }
 
+// Returns the indicator showing that the countdown repeats: the looped arrows when the LCD has them, the bell otherwise.
+static inline watch_indicator_t repeat_indicator(void) {
+    return watch_get_lcd_type() == WATCH_LCD_TYPE_CLASSIC ? WATCH_INDICATOR_BELL : WATCH_INDICATOR_LAP;
+}
+
 static inline void button_beep() {
     // play a beep as confirmation for a button press (if applicable)
     if (movement_button_should_sound()) watch_buzzer_play_note_with_volume(BUZZER_NOTE_C7, 50, movement_button_volume());
@@ -214,7 +219,7 @@ void countdown_face_activate(void *context) {
     }
     watch_set_colon();
     if(state->repeat)
-        watch_set_indicator(WATCH_INDICATOR_BELL);
+        watch_set_indicator(repeat_indicator());
 
     movement_request_tick_frequency(1);
     quick_ticks_running = false;
@@ -346,11 +351,10 @@ bool countdown_face_loop(movement_event_t event, void *context) {
                 // Toggle auto-repeat
                 button_beep();
                 state->repeat = !state->repeat;
-                watch_indicator_t repeat = watch_get_lcd_type() == WATCH_LCD_TYPE_CLASSIC ? WATCH_INDICATOR_BELL : WATCH_INDICATOR_LAP;
                 if(state->repeat)
-                    watch_set_indicator(repeat);
+                    watch_set_indicator(repeat_indicator());
                 else
-                    watch_clear_indicator(repeat);
+                    watch_clear_indicator(repeat_indicator());
             }
             break;
         case EVENT_ALARM_LONG_UP:
