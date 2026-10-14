@@ -325,7 +325,7 @@ movement_watch_face_advisory_t alarm_face_advise(void *context) {
                         state->next_snooze_alarm.minute += ALARM_FACE_SNOOZE_DELAY;
                         if (state->next_snooze_alarm.minute >= 60) {
                             state->next_snooze_alarm.minute %= 60;
-                            state->next_snooze_alarm.hour += 1;
+                            state->next_snooze_alarm.hour = (state->next_snooze_alarm.hour + 1) % 24;
                         }
                     } else {
                         // We have repeated the snooze alarms the max number allowed, don't play it again until tomorrow
